@@ -413,10 +413,7 @@
     .novidades .novidade { max-width: none; padding: 0; background: none; border: 0; border-radius: 0; }
     .novidades .novidade h3 { font-family: "Sairo Serifa", "Fraunces", Georgia, serif; font-weight: 700; font-size: clamp(1.7rem, 3.4vw, 2.5rem); line-height: 1.08; }
     .novidades .novidade-foto { margin: 0; }
-    .novidades .novidade-foto img, .jornal-cartaz img { display: block; width: 100%; height: auto; max-height: 460px; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 3px solid var(--preto); border-radius: 0; }
-    .jornal-cartaz { margin: 0; }
-    .jornal-cartaz figcaption { font-size: .8rem; opacity: .75; margin-top: 6px; }
-    #festa-foto:not([hidden]) + .jornal-cartaz { display: none; }
+    .novidades .novidade-foto img, .festa-relato .novidade-foto img { display: block; width: 100%; height: auto; max-height: 460px; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 3px solid var(--preto); border-radius: 0; }
     /* posts publicados pelo painel */
     #novidades-extra { gap: 0; margin-bottom: 0; }
     #novidades-extra .novidade { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; align-items: start;
@@ -425,20 +422,12 @@
     #novidades-extra .novidade-foto { grid-column: 1; grid-row: 1 / span 20; }
     #novidades-extra .novidade:not(:has(.novidade-foto)) > * { grid-column: 1 / -1; }
     #novidades-extra .novidade p { max-width: 62ch; }
-    /* relato da Festa */
-    .novidade.jornal { display: grid; grid-template-columns: 2fr 1fr; gap: 0; }
-    .jornal-principal { padding-right: 36px; border-right: 2px solid var(--preto); display: grid; gap: 14px; align-content: start; }
     .jornal-colunas { columns: 2; column-gap: 32px; column-rule: 1px solid rgba(23,23,23,.25); }
     .jornal-colunas p { max-width: none; margin: 0 0 14px; break-inside: avoid-column; }
     .jornal-colunas .abertura::first-letter { font-family: var(--pincel); font-weight: 400; font-size: 4.4em; line-height: .8; float: left; margin: 6px 8px 0 0; color: var(--vermelho); }
-    .jornal-lado { padding-left: 32px; display: grid; gap: 18px; align-content: start; }
     .jornal-num { display: grid; line-height: 1.1; border-bottom: 2px solid var(--preto); padding-bottom: 18px; }
     .jornal-num b { font-family: var(--pincel); font-weight: 400; font-size: 6.5rem; line-height: .9; color: var(--laranja); }
     .jornal-num span { font-weight: 700; }
-    .jornal-fatos { list-style: none; display: grid; gap: 14px; }
-    .jornal-fatos li { border-bottom: 2px solid var(--preto); padding-bottom: 14px; }
-    .jornal-fatos strong { display: block; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--verde-profundo); }
-    .jornal-lado .botao { justify-self: start; }
     @media (max-width: 800px) {
       .menu .miolo { justify-content: space-between; row-gap: 4px; }
       .menu ul { order: 3; flex: none; justify-content: flex-start;
@@ -448,10 +437,7 @@
       #novidades-extra .novidade { grid-template-columns: 1fr; }
       #novidades-extra .novidade > *, #novidades-extra .novidade-foto { grid-column: 1; grid-row: auto; }
       #novidades-extra .novidade-foto { order: -1; }
-      .novidade.jornal { grid-template-columns: 1fr; }
-      .jornal-principal { padding-right: 0; border-right: 0; }
       .jornal-colunas { columns: 1; }
-      .jornal-lado { padding-left: 0; margin-top: 28px; border-top: 4px solid var(--preto); padding-top: 22px; }
     }
     /* ---------- Onde a gente está ---------- */
     .onde { background: var(--amarelo); }
@@ -469,6 +455,19 @@
     .onde-mapa figcaption { font-size: .75rem; margin-top: 10px; }
     .onde-mapa figcaption a { color: inherit; }
     @media (max-width: 800px) { .onde .miolo { grid-template-columns: 1fr; gap: 28px; } .onde-etiqueta { left: auto; right: calc(47.5% + 30px); } }
+    /* Novidades vazia + relato da Festa dentro da janela do card */
+    .novidades-vazio { display: none; font-weight: 700; }
+    #novidades-extra:empty + .novidades-vazio { display: block; }
+    .festa-relato { margin-top: 48px; background: var(--fundo); color: var(--preto); border: 3px solid var(--preto);
+      border-radius: 36px 12px 36px 12px; padding: clamp(22px, 4vw, 40px); display: grid; grid-template-columns: 1fr 180px; gap: 18px 36px; align-items: start; }
+    .festa-relato-texto { display: grid; gap: 14px; }
+    .festa-relato .novidade-foto { margin: 0; }
+    .festa-relato .meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: .9rem; }
+    .festa-relato .etiqueta { display: inline-block; padding: 3px 14px; font: 700 .78rem var(--corpo); text-transform: uppercase; letter-spacing: .04em;
+      background: var(--amarelo); border: 2px solid var(--preto); border-radius: 20px 8px 20px 8px; }
+    .festa-relato h3 { font-family: "Sairo Serifa", "Fraunces", Georgia, serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.1; }
+    .festa-relato .jornal-num { border-bottom: 0; padding-bottom: 0; }
+    @media (max-width: 800px) { .festa-relato { grid-template-columns: 1fr; } .festa-relato .jornal-num { order: -1; } }
   </style>
 </head>
 <body>
@@ -647,6 +646,24 @@
         </div>
       </div>
 
+      <section class="festa-relato" aria-labelledby="festa-relato-titulo">
+        <div class="festa-relato-texto">
+          <figure class="novidade-foto" id="festa-foto" hidden><img src="" alt="" loading="lazy"></figure>
+          <div class="meta">
+            <span class="etiqueta">Cultura</span>
+            <time datetime="2026-10-11">11 de outubro</time>
+          </div>
+          <h3 id="festa-relato-titulo">Uma manhã de festa na rua: a Sairó celebrou o Dia das Crianças</h3>
+          <div class="jornal-colunas">
+            <p class="abertura">No dia 11 de outubro, a rua virou festa. A Sairó reuniu cerca de 50 crianças e suas famílias numa manhã de alegria, brincadeiras e muita comida gostosa.</p>
+            <p>Das 9h ao meio-dia, a Festa na Rua das Crianças foi aberta para toda a comunidade. A ideia era simples: garantir que as crianças tivessem uma manhã para brincar, rir e ser o centro das atenções.</p>
+            <p>A programação teve pintura facial, aula de luta livre, aula de swordplay, pula-pula, brinquedos infláveis e danças. Para matar a fome, a mesa estava cheia: cachorro-quente, torta salgada, pipoca, chup-chup, guaraná e bolo. Na saída, cada criança levou para casa um saquinho de doces.</p>
+            <p>Com cerca de 50 crianças por ali, a rua ficou cheia de risada, correria e gente se encontrando. A festa só aconteceu porque muita gente se juntou: voluntários, famílias, vizinhos e apoiadores. É assim que a Sairó trabalha, a partir do encontro.</p>
+          </div>
+        </div>
+        <p class="jornal-num"><span>cerca de</span><b>50</b><span>crianças e suas famílias</span></p>
+      </section>
+
       <div class="natal-fecho">
         <p class="grande"><span class="tarja r">Um dia para as crianças ocuparem a rua, brincarem e serem vistas.</span></p>
         <p><span class="tarja v">Evento gratuito.</span></p>
@@ -668,37 +685,7 @@
         <p class="intro">Relatos das ações da Sairó e notícias do que acontece por aqui.</p>
       </div>
       <div id="novidades-extra"></div>
-      <article class="novidade jornal">
-        <div class="jornal-principal">
-          <!-- a foto real vem do painel (Novidades → foto da Festa); enquanto não houver, aparece o cartaz -->
-          <figure class="novidade-foto" id="festa-foto" hidden><img src="" alt="" loading="lazy"></figure>
-          <figure class="jornal-cartaz">
-            <img src="/assets/img/festa-cartaz-topo.jpg" alt="Cartaz da Festa na Rua das Crianças, com crianças brincando" loading="lazy" width="607" height="376">
-            <figcaption>Festa na Rua das Crianças, 11 de outubro</figcaption>
-          </figure>
-          <div class="meta">
-            <span class="etiqueta">Cultura</span>
-            <time datetime="2026-10-11">11 de outubro</time>
-          </div>
-          <h3>Uma manhã de festa na rua: a Sairó celebrou o Dia das Crianças</h3>
-          <div class="jornal-colunas">
-            <p class="abertura">No dia 11 de outubro, a rua virou festa. A Sairó reuniu cerca de 50 crianças e suas famílias numa manhã de alegria, brincadeiras e muita comida gostosa.</p>
-            <p>Das 9h ao meio-dia, a Festa na Rua das Crianças foi aberta para toda a comunidade. A ideia era simples: garantir que as crianças tivessem uma manhã para brincar, rir e ser o centro das atenções.</p>
-            <p>A programação teve pintura facial, aula de luta livre, aula de swordplay, pula-pula, brinquedos infláveis e danças. Para matar a fome, a mesa estava cheia: cachorro-quente, torta salgada, pipoca, chup-chup, guaraná e bolo. Na saída, cada criança levou para casa um saquinho de doces.</p>
-            <p>Com cerca de 50 crianças por ali, a rua ficou cheia de risada, correria e gente se encontrando. A festa só aconteceu porque muita gente se juntou: voluntários, famílias, vizinhos e apoiadores. É assim que a Sairó trabalha, a partir do encontro.</p>
-          </div>
-        </div>
-        <aside class="jornal-lado" aria-label="A festa em números">
-          <p class="jornal-num"><span>cerca de</span><b>50</b><span>crianças e suas famílias</span></p>
-          <ul class="jornal-fatos">
-            <li><strong>Quando</strong> 11 de outubro, das 9h ao meio-dia</li>
-            <li><strong>Onde</strong> Rua do Registro, Viegas, Bangu</li>
-            <li><strong>Para quem</strong> Aberta para toda a comunidade</li>
-          </ul>
-          <p>Quer ajudar a próxima ação a acontecer? Conheça as formas de apoiar a Sairó.</p>
-          <a class="botao" href="#apoie">Apoie a Sairó</a>
-        </aside>
-      </article>
+      <p class="novidades-vazio">Em breve, novidades por aqui.</p>
     </div>
   </section>
 
