@@ -468,6 +468,17 @@
     .festa-relato h3 { font-family: "Sairo Serifa", "Fraunces", Georgia, serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.1; }
     .festa-relato .jornal-num { border-bottom: 0; padding-bottom: 0; }
     @media (max-width: 800px) { .festa-relato { grid-template-columns: 1fr; } .festa-relato .jornal-num { order: -1; } }
+    /* atividades da Festa com fotos */
+    .natal-lista li.atividade { padding: 0; }
+    .natal-lista li.atividade:hover { transform: none; }
+    .atividade summary { list-style: none; cursor: pointer; display: flex; align-items: center; padding: 12px 20px; min-height: 44px; }
+    .atividade summary::-webkit-details-marker { display: none; }
+    .atividade-ver { margin-left: auto; padding-left: 12px; font: 700 .8rem var(--corpo); color: var(--amarelo); white-space: nowrap; }
+    .atividade-ver::after { content: " ▾"; display: inline-block; transition: transform .2s ease; }
+    .atividade details[open] .atividade-ver::after { transform: rotate(180deg); }
+    .atividade summary:hover .atividade-ver { text-decoration: underline; }
+    .atividade-fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; padding: 0 12px 12px; }
+    .atividade-fotos img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; border: 2px solid var(--amarelo); }
   </style>
 </head>
 <body>
@@ -636,7 +647,15 @@
           </div>
           <p style="margin-top:28px"><span class="tarja a">O que teve na festa:</span></p>
           <ul class="natal-lista">
-            <li><span class="festa-ponto" aria-hidden="true"></span>Pintura facial</li>
+            <li class="atividade">
+              <!-- fotos da atividade: acrescente mais <img> dentro de .atividade-fotos -->
+              <details>
+                <summary><span class="festa-ponto" aria-hidden="true"></span>Pintura facial<span class="atividade-ver">Ver fotos</span></summary>
+                <div class="atividade-fotos">
+                  <img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478">
+                </div>
+              </details>
+            </li>
             <li><span class="festa-ponto" aria-hidden="true"></span>Aula de luta livre e de swordplay</li>
             <li><span class="festa-ponto" aria-hidden="true"></span>Pula-pula e brinquedos infláveis</li>
             <li><span class="festa-ponto" aria-hidden="true"></span>Danças</li>
