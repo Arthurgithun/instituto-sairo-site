@@ -1,11 +1,24 @@
 // /api/admin/records – projetos, agenda, fotos e informações (leitura, gravação e exclusão).
-import { bad, clean, db, getSettings, json, listCollection, newId, readJson, requireAdmin, validId } from "../lib/common.mjs";
+import { bad, clean, db, getSettings, json, listCollection, newId, readJson, requireAdmin, validId, withImage } from "../lib/common.mjs";
+import { randomUUID } from "node:crypto";
 
 const settingKeys = ["email", "whatsapp", "instagram", "agenda", "pixNome", "pixCnpj", "pixChave", "linkCartao"];
 const fields = {
-  projects: [["title", 160], ["year", 500], ["description", 4000]],
+  projects: [["title", 160], ["year", 500], ["description", 4000], ["tags", 120], ["color", 20]],
   events: [["title", 160], ["date", 500], ["location", 500], ["description", 4000], ["link", 500]],
 };
+
+// projetos podem ter imagem (logo ou foto) e uma cor da paleta da Sairó
+const colors = ["", "verde", "azul", "vermelho", "laranja", "amarelo"];
+const formats = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" };
+const MAX_BYTES = 5 * 1024 * 1024; // a Netlify aceita até ~6 MB por envio
+const isFile = (v) => v && typeof v !== "string" && v.size > 0;
+async function saveImage(file) {
+  const objectKey = `${randomUUID()}.${formats[file.type]}`;
+  await db("sairo-media").set(objectKey, await file.arrayBuffer(), { metadata: { contentType: file.type } });
+  return objectKey;
+}
+const dropImage = (objectKey) => (objectKey ? db("sairo-media").delete(objectKey).catch(() => {}) : null);
 
 export default async (req) => {
   const write = req.method !== "GET";
@@ -15,11 +28,19 @@ export default async (req) => {
     if (req.method === "GET") {
       const [projects, events, photos, settings] = await Promise.all([listCollection("projects"), listCollection("events"), listCollection("photos"), getSettings()]);
       return json({
-        projects: projects.slice(0, 200), events: events.slice(0, 200), settings,
+        projects: projects.slice(0, 200).map(withImage), events: events.slice(0, 200), settings,
         photos: photos.slice(0, 200).map((p) => ({ ...p, url: `/api/media/${p.objectKey}` })),
       });
     }
-    const body = await readJson(req);
+    // projetos com imagem chegam como formulário (multipart); o resto, como JSON
+    let body = null, image = null;
+    if ((req.headers.get("content-type") || "").includes("multipart/form-data")) {
+      let form;
+      try { form = await req.formData(); } catch { return bad("Envio inválido."); }
+      body = {};
+      for (const [key, value] of form.entries()) if (typeof value === "string") body[key] = value;
+      image = form.get("image");
+    } else body = await readJson(req);
     if (!body) return bad("JSON inválido.");
 
     if (req.method === "POST") {
@@ -43,18 +64,27 @@ export default async (req) => {
       if (body.table !== "projects" && body.table !== "events") return bad("Tabela não permitida.");
       const name = body.table;
       if (typeof body.title !== "string" || !body.title.trim() || body.title.length > 160) return bad("Informe um título de até 160 caracteres.");
-      const record = { published: body.published === false || body.published === 0 ? 0 : 1 };
+      const record = { published: body.published === false || body.published === 0 || body.published === "0" ? 0 : 1 };
       for (const [key, max] of fields[name]) record[key] = clean(body[key], max);
       if (name === "events" && record.link && !/^https:\/\//i.test(record.link)) return bad("O link do evento deve começar com https://.");
+      if (name === "projects" && !colors.includes(record.color)) record.color = "";
+      if (isFile(image) && (!formats[image.type] || image.size > MAX_BYTES)) return bad("Envie uma imagem JPG, PNG, WebP ou GIF de até 5 MB.");
+      let id = null, previous = null;
       if (body.id !== undefined && body.id !== 0 && body.id !== "") {
         if (!validId(body.id)) return bad("Identificador inválido.");
-        const key = `${name}/${body.id}`;
-        if (!(await store.get(key, { type: "json" }))) return bad("Registro não encontrado.", 404);
-        await store.setJSON(key, record);
-        return json({ ok: true, id: body.id });
+        previous = await store.get(`${name}/${body.id}`, { type: "json" });
+        if (!previous) return bad("Registro não encontrado.", 404);
+        id = body.id;
       }
-      const id = newId();
+      if (name === "projects") {
+        record.objectKey = previous?.objectKey || "";
+        if (isFile(image)) record.objectKey = await saveImage(image);
+        else if (body.removeImage === "1") record.objectKey = "";
+        record.alt = record.objectKey ? clean(body.alt, 280) : "";
+      }
+      id = id || newId();
       await store.setJSON(`${name}/${id}`, record);
+      if (previous?.objectKey && previous.objectKey !== record.objectKey) await dropImage(previous.objectKey);
       return json({ ok: true, id });
     }
 
@@ -62,9 +92,9 @@ export default async (req) => {
       if (!validId(body.id)) return bad("Identificador inválido.");
       if (!["projects", "events", "photos"].includes(body.table)) return bad("Tabela não permitida.");
       const store = db("sairo-content"), key = `${body.table}/${body.id}`;
-      if (body.table === "photos") {
-        const photo = await store.get(key, { type: "json" });
-        if (photo?.objectKey) await db("sairo-media").delete(photo.objectKey);
+      if (body.table === "photos" || body.table === "projects") {
+        const current = await store.get(key, { type: "json" });
+        if (current?.objectKey) await dropImage(current.objectKey);
       }
       await store.delete(key);
       return json({ ok: true });
