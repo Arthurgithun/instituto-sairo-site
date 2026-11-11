@@ -343,26 +343,19 @@
     .claro .natal-cartao { background: #fff; border: 3px solid var(--preto); }
     .claro .natal-fechar { background: var(--vermelho); border-color: var(--preto); color: #fff; }
     @media (max-width: 800px) { .acoes-par { grid-template-columns: 1fr; } }
-    /* ---------- projetos cadastrados pelo painel: cor chapada, placa em pincel, ano em tarja ---------- */
-    .projeto-card { --pc: var(--verde-profundo); --pt: var(--fundo); background: var(--pc); color: var(--pt); border-color: var(--preto); gap: 22px; justify-content: flex-start; }
-    .projeto-card .natal-botao { margin-top: auto; }
-    .projeto-card.cor-verde { --pc: var(--verde-profundo); --pt: var(--fundo); }
-    .projeto-card.cor-azul { --pc: var(--azul-profundo); --pt: #fff; }
-    .projeto-card.cor-vermelho { --pc: var(--vermelho); --pt: var(--preto); }
-    .projeto-card.cor-laranja { --pc: var(--laranja); --pt: var(--preto); }
-    .projeto-card.cor-amarelo { --pc: var(--amarelo); --pt: var(--preto); }
-    .projeto-card .natal-topo { display: grid; gap: 16px; justify-items: start; width: 100%; }
-    .projeto-card .projeto-imagem { margin: 0; width: 100%; background: var(--fundo); border: 3px solid var(--preto); border-radius: 34px 12px 34px 12px; padding: 10px; transform: rotate(-1.2deg); }
-    .projeto-card .projeto-imagem img { width: 100%; max-height: 220px; object-fit: contain; border-radius: 26px 8px 26px 8px; }
-    .projeto-card .acao-placa { font-family: var(--pincel); font-weight: 400; font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.05; text-align: left; text-transform: uppercase;
-      background: var(--fundo); color: var(--preto); border: 3px solid var(--preto); padding: 18px 22px; transform: rotate(-1deg); }
-    .projeto-card .projeto-ano { display: inline-block; background: var(--preto); color: var(--fundo); font: 700 .9rem var(--corpo); padding: 4px 14px; transform: rotate(-2deg); }
-    .projeto-card .etiqueta { background: var(--fundo); }
-    .projeto-card .etiqueta + .etiqueta { background: #fff; }
-    .projeto-card .projeto-texto { max-width: 52ch; line-height: 1.7; white-space: pre-line; }
-    .projeto-card .natal-botao { background: var(--fundo); color: var(--preto); border-color: var(--preto); }
-    .projeto-card .natal-botao:hover { background: var(--amarelo); }
-    .projeto-card.cor-amarelo .natal-botao:hover { background: #fff; }
+    /* ---------- projetos cadastrados pelo painel: mesmo formato dos cards do Natal e da Festa ---------- */
+    .projeto-card .natal-logo { object-fit: contain; max-height: 160px; }
+    .projeto-card .acao-placa { font-family: var(--pincel); font-weight: 400; text-transform: uppercase; }
+    .projeto-cartaz { aspect-ratio: auto; }
+    /* cores chapadas (opcionais): fundo de uma cor só, tarjas escuras para dar leitura */
+    .projeto-solido { --nv: #171717; --nr: #171717; --nc: #F3EEE2; background: var(--pc); color: var(--pt); }
+    .projeto-solido.cor-verde { --pc: var(--verde-profundo); --pt: #fff; }
+    .projeto-solido.cor-azul { --pc: var(--azul-profundo); --pt: #fff; }
+    .projeto-solido.cor-vermelho { --pc: var(--vermelho); --pt: #fff; }
+    .projeto-solido.cor-laranja { --pc: var(--laranja); --pt: var(--preto); }
+    .projeto-solido.cor-amarelo { --pc: var(--amarelo); --pt: var(--preto); }
+    .acao-card.projeto-solido { border-color: var(--preto); }
+    .projeto-solido .natal-abrir, .projeto-solido .natal-botao { background: var(--nc); color: var(--preto); border-color: var(--preto); }
 
 
     /* ---------- Festa na Rua das Crianças: mesmo padrão do Natal que Acolhe, cores do cartaz ---------- */

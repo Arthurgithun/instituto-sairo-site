@@ -146,25 +146,66 @@
     byId("mensagem-vazia").hidden = gallery.children.length > 0;
 
     const actions = document.querySelector(".acoes-par");
-    // projetos do painel: cor chapada da paleta (escolhida ou automática), imagem, ano em tarja e etiquetas
-    const autoCores = ["verde", "azul", "vermelho", "laranja"];
+    // projetos do painel: mesmo formato dos cards do Natal e da Festa (card + janela "Conheça")
+    const temas = { natal: "fundo-natal", festa: "fundo-festa", verde: "projeto-solido cor-verde", azul: "projeto-solido cor-azul",
+      vermelho: "projeto-solido cor-vermelho", laranja: "projeto-solido cor-laranja", amarelo: "projeto-solido cor-amarelo" };
+    const mk = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+    const linhas = (t) => String(t || "").split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
+    const paragrafos = (t) => String(t || "").split(/\r?\n\s*\r?\n/).map((x) => x.trim()).filter(Boolean);
+    const tarja = (cls, text, tag = "p") => { const box = mk(tag, tag === "h3" ? "natal-pergunta" : ""); box.append(mk("span", `tarja ${cls}`, text)); return box; };
+    const imagem = (cls, url, alt) => { const img = mk("img", cls); img.src = url; img.alt = alt || ""; img.loading = "lazy"; return img; };
     projects.forEach((project, i) => {
-      const cor = ["verde", "azul", "vermelho", "laranja", "amarelo"].includes(project.color) ? project.color : autoCores[i % autoCores.length];
-      const card = document.createElement("article"); card.className = `acao-card projeto-card cor-${cor}`;
-      const header = document.createElement("div"); header.className = "natal-topo";
-      if (project.url) {
-        const fig = document.createElement("figure"); fig.className = "projeto-imagem";
-        const img = document.createElement("img"); img.src = project.url; img.alt = project.alt || ""; img.loading = "lazy";
-        fig.append(img); header.append(fig);
-      }
-      const title = document.createElement("h3"); title.className = "acao-placa"; title.textContent = project.title;
-      header.append(title);
-      if (project.year) { const year = document.createElement("p"); const tarja = document.createElement("span"); tarja.className = "projeto-ano"; tarja.textContent = project.year; year.append(tarja); header.append(year); }
+      const tema = temas[project.color] || (i % 2 === 0 ? "fundo-natal" : "fundo-festa");
+      const modalId = `projeto-modal-${String(project.id || i).replace(/[^\w-]/g, "")}`;
+
+      // card
+      const card = mk("article", `acao-card projeto-card ${tema}`), topo = mk("div", "natal-topo");
+      if (project.url) topo.append(imagem("natal-logo", project.url, project.alt || project.title));
+      else topo.append(mk("h3", "acao-placa", project.title));
+      if (project.seloUrl) topo.append(imagem("natal-selo", project.seloUrl, project.seloAlt));
+      if (project.year) topo.append(tarja("v", project.year));
       const tags = String(project.tags || "").split(",").map((t) => t.trim()).filter(Boolean).slice(0, 4);
-      if (tags.length) { const eixos = document.createElement("p"); eixos.className = "eixos"; tags.forEach((t) => { const tag = document.createElement("span"); tag.className = "etiqueta"; tag.textContent = t; eixos.append(tag); }); header.append(eixos); }
-      const description = document.createElement("p"); description.className = "projeto-texto"; description.textContent = project.description;
-      const call = document.createElement("a"); call.className = "natal-botao"; call.href = "#contato"; call.textContent = "Fale com a gente";
-      card.append(header, description, call); actions?.append(card);
+      if (tags.length) { const eixos = mk("p", "eixos"); tags.forEach((t) => eixos.append(mk("span", "etiqueta", t))); topo.append(eixos); }
+      const abrir = mk("button", "natal-abrir", `Conheça ${project.title}`);
+      abrir.type = "button"; abrir.setAttribute("aria-haspopup", "dialog"); abrir.setAttribute("aria-controls", modalId);
+      card.append(topo, abrir); actions?.append(card);
+
+      // janela "Conheça"
+      const modal = mk("dialog", `natal natal-modal projeto-modal ${tema}`); modal.id = modalId; modal.setAttribute("aria-label", project.title);
+      const fechar = mk("button", "natal-fechar", "×"); fechar.type = "button"; fechar.setAttribute("aria-label", "Fechar");
+      const miolo = mk("div", "natal-modal-miolo"), grade = mk("div", "natal-grade"), col1 = mk("div"), col2 = mk("div");
+      const frases = linhas(project.frases);
+      if (frases.length) frases.forEach((f, k) => col1.append(k === 1 ? tarja("v", f, "h3") : tarja(k % 2 === 0 ? "r" : "v", f)));
+      else col1.append(tarja("v", project.title, "h3"));
+      if (project.cartazUrl) col1.append(imagem("festa-cartaz projeto-cartaz", project.cartazUrl, project.cartazAlt));
+      const cartao = mk("div", "natal-cartao");
+      cartao.append(mk("h3", "", project.subtitulo || project.title));
+      paragrafos(project.description).forEach((t) => cartao.append(mk("p", "", t)));
+      const dados = [["Dia", project.dia], ["Horário", project.horario], ["Local", project.local]].filter(([, v]) => v);
+      if (dados.length) { const ul = mk("ul", "festa-dados"); dados.forEach(([k, v]) => { const li = mk("li"); li.append(mk("strong", "", `${k}:`), ` ${v}`); ul.append(li); }); cartao.append(ul); }
+      col2.append(cartao);
+      const itens = linhas(project.lista);
+      if (itens.length) {
+        const titulo = tarja("a", project.listaTitulo || "Destaques:"); titulo.style.marginTop = "28px"; col2.append(titulo);
+        const ul = mk("ul", "natal-lista"); itens.forEach((t) => { const li = mk("li"); li.append(mk("span", "festa-ponto"), t); li.firstChild.setAttribute("aria-hidden", "true"); ul.append(li); }); col2.append(ul);
+      }
+      grade.append(col1, col2); miolo.append(grade);
+      const relato = paragrafos(project.relato);
+      if (relato.length) {
+        const sec = mk("section", "festa-relato"); sec.append(tarja("a", "Como foi:"));
+        const box = mk("div", "natal-cartao festa-relato-cartao");
+        if (project.relatoTitulo) box.append(mk("h3", "", project.relatoTitulo));
+        relato.forEach((t) => box.append(mk("p", "", t)));
+        sec.append(box); miolo.append(sec);
+      }
+      const fecho = mk("div", "natal-fecho"), botoes = mk("div", "natal-botoes"), contato = mk("a", "natal-botao", "Fale com a gente");
+      contato.href = "#contato"; botoes.append(contato); fecho.append(botoes); miolo.append(fecho);
+      modal.append(fechar, miolo); document.body.append(modal);
+
+      abrir.addEventListener("click", () => { modal.showModal(); modal.scrollTop = 0; });
+      modal.addEventListener("click", (e) => { if (e.target === modal) modal.close(); });
+      fechar.addEventListener("click", () => modal.close());
+      contato.addEventListener("click", () => modal.close());
     });
 
     const agenda = byId("agenda-eventos");

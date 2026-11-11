@@ -22,10 +22,14 @@ export default async (req) => {
     return json({
       ...extra,
       festaFoto: festa?.objectKey ? { url: `/api/media/${festa.objectKey}`, alt: festa.alt || "" } : null,
-      projects: projects.filter((p) => p.published !== 0).slice(0, 30).map(({ id, title, year, description, tags, color, objectKey, alt }) => ({
-        id, title, year, description, tags: tags || "", color: color || "",
-        ...(objectKey ? { url: `/api/media/${objectKey}`, alt: alt || "" } : {}),
-      })),
+      projects: projects.filter((p) => p.published !== 0).slice(0, 30).map((p) => {
+        const out = { id: p.id };
+        for (const key of ["title", "year", "description", "tags", "color", "frases", "subtitulo", "dia", "horario", "local", "listaTitulo", "lista", "relatoTitulo", "relato"]) out[key] = p[key] || "";
+        if (p.objectKey) { out.url = `/api/media/${p.objectKey}`; out.alt = p.alt || ""; }
+        if (p.seloKey) { out.seloUrl = `/api/media/${p.seloKey}`; out.seloAlt = p.seloAlt || ""; }
+        if (p.cartazKey) { out.cartazUrl = `/api/media/${p.cartazKey}`; out.cartazAlt = p.cartazAlt || ""; }
+        return out;
+      }),
       events: events.filter((e) => e.published !== 0).slice(0, 40)
         .map(({ id, title, date, location, description, link }) => ({ id, title, date, location, description, link }))
         .sort((a, b) => (a.date || "\uffff").localeCompare(b.date || "\uffff")),

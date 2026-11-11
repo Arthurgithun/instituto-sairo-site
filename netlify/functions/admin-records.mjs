@@ -1,15 +1,27 @@
 // /api/admin/records – projetos, agenda, fotos e informações (leitura, gravação e exclusão).
-import { bad, clean, db, getSettings, json, listCollection, newId, readJson, requireAdmin, validId, withImage } from "../lib/common.mjs";
+import { bad, clean, db, getSettings, json, listCollection, newId, readJson, requireAdmin, validId } from "../lib/common.mjs";
 import { randomUUID } from "node:crypto";
 
 const settingKeys = ["email", "whatsapp", "instagram", "agenda", "pixNome", "pixCnpj", "pixChave", "linkCartao"];
 const fields = {
-  projects: [["title", 160], ["year", 500], ["description", 4000], ["tags", 120], ["color", 20]],
+  // projetos seguem o formato dos cards do Natal e da Festa: card (logo, selo, tarja, etiquetas) + janela "Conheça"
+  projects: [["title", 160], ["year", 500], ["description", 4000], ["tags", 120], ["color", 20],
+    ["frases", 1000], ["subtitulo", 160], ["dia", 120], ["horario", 120], ["local", 300],
+    ["listaTitulo", 120], ["lista", 3000], ["relatoTitulo", 200], ["relato", 8000]],
   events: [["title", 160], ["date", 500], ["location", 500], ["description", 4000], ["link", 500]],
 };
 
 // projetos podem ter imagem (logo ou foto) e uma cor da paleta da Sairó
-const colors = ["", "verde", "azul", "vermelho", "laranja", "amarelo"];
+const colors = ["", "natal", "festa", "verde", "azul", "vermelho", "laranja", "amarelo"];
+// imagens do projeto: [campo do formulário, chave guardada, descrição]
+const imageSlots = [["image", "objectKey", "alt"], ["selo", "seloKey", "seloAlt"], ["cartaz", "cartazKey", "cartazAlt"]];
+const withProjectImages = (row) => {
+  const out = { ...row };
+  if (row.objectKey) out.url = `/api/media/${row.objectKey}`;
+  if (row.seloKey) out.seloUrl = `/api/media/${row.seloKey}`;
+  if (row.cartazKey) out.cartazUrl = `/api/media/${row.cartazKey}`;
+  return out;
+};
 const formats = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" };
 const MAX_BYTES = 5 * 1024 * 1024; // a Netlify aceita até ~6 MB por envio
 const isFile = (v) => v && typeof v !== "string" && v.size > 0;
@@ -28,18 +40,18 @@ export default async (req) => {
     if (req.method === "GET") {
       const [projects, events, photos, settings] = await Promise.all([listCollection("projects"), listCollection("events"), listCollection("photos"), getSettings()]);
       return json({
-        projects: projects.slice(0, 200).map(withImage), events: events.slice(0, 200), settings,
+        projects: projects.slice(0, 200).map(withProjectImages), events: events.slice(0, 200), settings,
         photos: photos.slice(0, 200).map((p) => ({ ...p, url: `/api/media/${p.objectKey}` })),
       });
     }
     // projetos com imagem chegam como formulário (multipart); o resto, como JSON
-    let body = null, image = null;
+    let body = null, files = {};
     if ((req.headers.get("content-type") || "").includes("multipart/form-data")) {
       let form;
       try { form = await req.formData(); } catch { return bad("Envio inválido."); }
       body = {};
       for (const [key, value] of form.entries()) if (typeof value === "string") body[key] = value;
-      image = form.get("image");
+      for (const [slot] of imageSlots) files[slot] = form.get(slot);
     } else body = await readJson(req);
     if (!body) return bad("JSON inválido.");
 
@@ -68,7 +80,7 @@ export default async (req) => {
       for (const [key, max] of fields[name]) record[key] = clean(body[key], max);
       if (name === "events" && record.link && !/^https:\/\//i.test(record.link)) return bad("O link do evento deve começar com https://.");
       if (name === "projects" && !colors.includes(record.color)) record.color = "";
-      if (isFile(image) && (!formats[image.type] || image.size > MAX_BYTES)) return bad("Envie uma imagem JPG, PNG, WebP ou GIF de até 5 MB.");
+      for (const file of Object.values(files)) if (isFile(file) && (!formats[file.type] || file.size > MAX_BYTES)) return bad("Envie imagens JPG, PNG, WebP ou GIF de até 5 MB.");
       let id = null, previous = null;
       if (body.id !== undefined && body.id !== 0 && body.id !== "") {
         if (!validId(body.id)) return bad("Identificador inválido.");
@@ -77,14 +89,16 @@ export default async (req) => {
         id = body.id;
       }
       if (name === "projects") {
-        record.objectKey = previous?.objectKey || "";
-        if (isFile(image)) record.objectKey = await saveImage(image);
-        else if (body.removeImage === "1") record.objectKey = "";
-        record.alt = record.objectKey ? clean(body.alt, 280) : "";
+        for (const [slot, key, altKey] of imageSlots) {
+          record[key] = previous?.[key] || "";
+          if (isFile(files[slot])) record[key] = await saveImage(files[slot]);
+          else if (body[`remove_${slot}`] === "1" || (slot === "image" && body.removeImage === "1")) record[key] = "";
+          record[altKey] = record[key] ? clean(body[altKey], 280) : "";
+        }
       }
       id = id || newId();
       await store.setJSON(`${name}/${id}`, record);
-      if (previous?.objectKey && previous.objectKey !== record.objectKey) await dropImage(previous.objectKey);
+      for (const [, key] of imageSlots) if (previous?.[key] && previous[key] !== record[key]) await dropImage(previous[key]);
       return json({ ok: true, id });
     }
 
@@ -94,7 +108,7 @@ export default async (req) => {
       const store = db("sairo-content"), key = `${body.table}/${body.id}`;
       if (body.table === "photos" || body.table === "projects") {
         const current = await store.get(key, { type: "json" });
-        if (current?.objectKey) await dropImage(current.objectKey);
+        for (const key of ["objectKey", "seloKey", "cartazKey"]) if (current?.[key]) await dropImage(current[key]);
       }
       await store.delete(key);
       return json({ ok: true });

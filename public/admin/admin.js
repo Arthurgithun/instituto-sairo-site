@@ -158,26 +158,62 @@
       published: h("input", { type: "checkbox", checked: ed ? ed.published !== 0 : true }),
     };
     f.description.value = ed?.description || "";
-    // projetos: imagem, etiquetas e cor do card (todos opcionais)
-    let chosen = null;
-    const nomeArq = h("span", {}, "Clique para escolher uma imagem (logo ou foto)");
-    const arquivo = h("input", { type: "file", id: "projeto-arquivo", class: "sr", accept: "image/png,image/jpeg,image/webp,image/gif", onchange: () => { chosen = arquivo.files[0] || null; nomeArq.textContent = chosen ? chosen.name : "Clique para escolher uma imagem (logo ou foto)"; } });
-    const alt = h("input", { value: ed?.alt || "", maxlength: 280, placeholder: "Ex.: Logo do projeto com um coração vermelho" });
-    const remover = h("input", { type: "checkbox" });
-    const tags = h("input", { value: ed?.tags || "", maxlength: 120, placeholder: "Ex.: Cuidado, Cultura" });
-    const cor = h("select", {}, [["", "Automática"], ["verde", "Verde"], ["azul", "Azul"], ["vermelho", "Vermelho"], ["laranja", "Laranja"], ["amarelo", "Amarelo"]]
+    // projetos: mesmo formato dos cards do Natal e da Festa (card + janela "Conheça"); tudo opcional, menos o título
+    const P = {};
+    const txt = (key, placeholder, max = 300) => (P[key] = h("input", { value: ed?.[key] || "", maxlength: max, placeholder }));
+    const area = (key, placeholder, rows = 4) => { const t = h("textarea", { rows, placeholder }); t.value = ed?.[key] || ""; return (P[key] = t); };
+    const imgs = {};
+    const picker = (slot, urlKey, altKey, rotulo, dica) => {
+      const st = (imgs[slot] = { file: null, altKey });
+      const id = `projeto-${slot}`, vazio = "Clique para escolher uma imagem";
+      const nome = h("span", {}, vazio);
+      const input = h("input", { type: "file", id, class: "sr", accept: "image/png,image/jpeg,image/webp,image/gif", onchange: () => { st.file = input.files[0] || null; nome.textContent = st.file ? st.file.name : vazio; } });
+      st.alt = h("input", { value: ed?.[altKey] || "", maxlength: 280, placeholder: "Descreva a imagem (para leitores de tela)" });
+      st.remove = h("input", { type: "checkbox" });
+      return h("div", { class: "form projeto-img" }, h("p", { class: "campo" }, rotulo, h("span", { class: "dica" }, dica)),
+        ed?.[urlKey] && h("img", { class: "previa", src: ed[urlKey], alt: "Imagem atual" }),
+        h("label", { class: "area", for: id }, "🖼", nome, input),
+        h("label", { class: "campo" }, "Descrição da imagem", st.alt),
+        ed?.[urlKey] && h("label", { class: "linha-marca" }, st.remove, "Remover esta imagem"));
+    };
+    const cor = h("select", {}, [["", "Automática (alterna entre Natal e Festa)"], ["natal", "Verde e vermelho (como o Natal que Acolhe)"], ["festa", "Azul e laranja (como a Festa na Rua)"],
+      ["verde", "Verde chapado"], ["azul", "Azul chapado"], ["vermelho", "Vermelho chapado"], ["laranja", "Laranja chapado"], ["amarelo", "Amarelo chapado"]]
       .map(([value, label]) => h("option", { value }, label)));
     cor.value = ed?.color || "";
+    const parte = (titulo, dica) => h("div", { class: "parte-form" }, h("h3", {}, titulo), h("p", { class: "dica" }, dica));
+    const camposProjeto = isProject ? [
+      parte("1. O card", "O que aparece na lista de ações, igual aos cards do Natal que Acolhe e da Festa na Rua."),
+      picker("image", "url", "alt", "Logo do projeto", " (fica numa caixa clara no topo do card; sem logo, o título aparece no lugar)"),
+      picker("selo", "seloUrl", "seloAlt", "Selo redondo", " (foto ou selo pequeno, ex.: selo de um parceiro ou ilustração)"),
+      h("label", { class: "campo" }, "Tarja do card (ex.: Realizada em 2025 • 1ª edição)", f.year),
+      h("label", { class: "campo" }, "Etiquetas (separe por vírgula, ex.: Cuidado, Mobilização)", txt("tags", "Ex.: Cultura, Cuidado", 120)),
+      h("label", { class: "campo" }, "Cores do card e da janela", cor),
+      parte("2. A janela “Conheça”", "Abre quando a pessoa clica em “Conheça …”. Preencha só o que fizer sentido."),
+      h("label", { class: "campo" }, "Frases de destaque (uma por linha; aparecem em tarjas coloridas, a 2ª fica grande)", area("frases", "Todo dezembro traz uma pergunta silenciosa:\nQuem está acolhendo quem mais precisa?", 4)),
+      picker("cartaz", "cartazUrl", "cartazAlt", "Cartaz ou foto grande", " (aparece embaixo das frases, como o cartaz da Festa)"),
+      h("label", { class: "campo" }, "Título do cartão (se vazio, usa o título do projeto)", txt("subtitulo", "Ex.: Festa na Rua", 160)),
+      h("label", { class: "campo" }, "Dia (opcional)", txt("dia", "Ex.: 11 de outubro", 120)),
+      h("label", { class: "campo" }, "Horário (opcional)", txt("horario", "Ex.: das 9h às 12h", 120)),
+      h("label", { class: "campo" }, "Local (opcional)", txt("local", "Ex.: Rua do Registro, 315, Viegas, Bangu", 300)),
+      h("label", { class: "campo" }, "Título da lista (ex.: O que fizemos, O que teve na festa)", txt("listaTitulo", "Ex.: O que fizemos:", 120)),
+      h("label", { class: "campo" }, "Itens da lista (um por linha)", area("lista", "Produzimos quentinhas\nMontamos kits de alimento", 5)),
+      h("label", { class: "campo" }, "Título do relato (opcional)", txt("relatoTitulo", "Ex.: Como foi o dia", 200)),
+      h("label", { class: "campo" }, "Relato completo (separe os parágrafos com uma linha em branco)", area("relato", "Conte como foi, com números e nomes reais...", 6)),
+    ] : [];
     const form = h("form", { class: "cartao form", onsubmit: (e) => {
       e.preventDefault();
       const body = { table: kind, id: ed?.id, title: f.title.value, description: f.description.value, published: f.published.checked ? 1 : 0 };
-      if (isProject) Object.assign(body, { year: f.year.value, tags: tags.value, color: cor.value, alt: alt.value, removeImage: remover.checked ? "1" : "" });
+      if (isProject) {
+        Object.assign(body, { year: f.year.value, color: cor.value });
+        for (const [key, el] of Object.entries(P)) body[key] = el.value;
+        for (const [slot, st] of Object.entries(imgs)) { body[st.altKey] = st.alt.value; if (st.remove.checked) body[`remove_${slot}`] = "1"; }
+      }
       else Object.assign(body, { date: f.date.value, location: f.location.value, link: f.link.value });
       run(async () => {
         if (isProject) {
           const form = new FormData();
           for (const [key, value] of Object.entries(body)) if (value !== undefined && value !== null) form.append(key, String(value));
-          if (chosen) form.append("image", await shrink(chosen));
+          for (const [slot, st] of Object.entries(imgs)) if (st.file) form.append(slot, await shrink(st.file));
           await api("/api/admin/records", { method: "POST", form });
         } else await api("/api/admin/records", { method: "POST", body });
         state.editing = null; await loadData();
@@ -185,14 +221,10 @@
     } },
       h("h2", {}, ed ? "Editar registro" : isProject ? "Novo projeto" : "Novo evento"),
       h("label", { class: "campo" }, "Título", f.title),
-      isProject ? [h("label", { class: "campo" }, "Ano ou situação (ex.: 2026, Em construção)", f.year),
-        h("label", { class: "campo" }, "Etiquetas (opcional, separe por vírgula)", tags),
-        h("label", { class: "campo" }, "Cor do card", cor),
-        ed?.url && h("img", { class: "previa", src: ed.url, alt: ed.alt || "Imagem atual" }),
-        h("label", { class: "area", for: "projeto-arquivo" }, "🖼", nomeArq, arquivo),
-        h("label", { class: "campo" }, "Descrição da imagem (para leitores de tela)", alt),
-        ed?.url && h("label", { class: "linha-marca" }, remover, "Remover a imagem atual")] : [h("label", { class: "campo" }, "Data e horário", f.date), h("label", { class: "campo" }, "Local", f.location), h("label", { class: "campo" }, "Link para inscrições (opcional)", f.link)],
-      h("label", { class: "campo" }, "Descrição", f.description),
+      isProject ? camposProjeto.slice(0, 7) : [h("label", { class: "campo" }, "Data e horário", f.date), h("label", { class: "campo" }, "Local", f.location), h("label", { class: "campo" }, "Link para inscrições (opcional)", f.link)],
+      isProject ? camposProjeto.slice(7, 9) : null,
+      h("label", { class: "campo" }, isProject ? "Resumo (aparece no cartão da janela; separe os parágrafos com uma linha em branco)" : "Descrição", f.description),
+      isProject ? camposProjeto.slice(9) : null,
       h("label", { class: "linha-marca" }, f.published, "Publicar no site"),
       h("div", { class: "botoes" }, h("button", { class: "btn", type: "submit", disabled: state.busy }, state.busy ? "Salvando..." : "Salvar"),
         ed && h("button", { class: "btn contorno", type: "button", onclick: () => { state.editing = null; render(); } }, "Cancelar")));
