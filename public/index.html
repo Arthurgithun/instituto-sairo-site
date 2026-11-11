@@ -507,7 +507,24 @@
     .novidades .novidade-logo img { aspect-ratio: 1536 / 462; object-fit: contain; background: #F3EEE2; padding: 12px; }
     /* fotos enviadas pelo painel: aparecem inteiras, sem corte, em qualquer formato */
     #novidades-extra .novidade-foto img { aspect-ratio: auto; height: auto; max-height: 520px; object-fit: contain; object-position: center; background: var(--fundo); }
-    .novidade-status { font-weight: 700; color: var(--vermelho); }
+    .novidade-status { font-weight: 700; color: #fff; background: var(--nr); padding: 3px 12px; border-radius: 12px 4px 12px 4px; transform: rotate(-1.5deg); display: inline-block; }
+    /* Cozinha Solidária: painel colorido com as cores da campanha */
+    #cozinha-solidaria { --nv: #225C3B; --nr: #C01E36; --nc: #F3EEE2; }
+    .novidades .novidade-logo {
+      align-self: stretch; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 22px;
+      padding: 34px 28px 64px; background: var(--nv); border: 3px solid var(--preto); border-radius: 36px 12px 36px 12px;
+    }
+    .novidades .novidade-logo::before { content: ""; position: absolute; right: -70px; top: -70px; width: 200px; height: 200px; background: var(--amarelo); border-radius: 0 100% 0 100%; opacity: .95; }
+    .novidades .novidade-logo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34px;
+      background: repeating-linear-gradient(-62deg, var(--nr) 0 18px, var(--nc) 18px 36px, var(--nv) 36px 54px, var(--amarelo) 54px 72px); border-top: 3px solid var(--preto); }
+    .novidades .novidade-logo img { position: relative; z-index: 1; padding: 0; border: 3px solid var(--preto); border-radius: 3.6% / 12%; background: var(--nc); transform: rotate(-2deg); max-height: none; }
+    .cozinha-selos { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 10px; }
+    .cozinha-selos span { font-weight: 700; font-size: .92rem; padding: 6px 14px; border: 3px solid var(--preto); border-radius: 18px 8px 18px 8px; color: var(--preto); }
+    .cozinha-selos span:nth-child(1) { background: var(--amarelo); transform: rotate(-1.5deg); }
+    .cozinha-selos span:nth-child(2) { background: var(--nc); transform: rotate(1deg); }
+    .cozinha-selos span:nth-child(3) { background: var(--nr); color: #fff; transform: rotate(-.8deg); }
+    #cozinha-solidaria .abertura { border-left: 6px solid var(--nr); padding-left: 16px; }
+    #cozinha-solidaria h3 { color: var(--nv); }
   </style>
 </head>
 <body>
@@ -718,7 +735,9 @@
       </div>
       <div id="novidades-extra"></div>
       <article class="novidade" id="cozinha-solidaria">
-        <figure class="novidade-foto novidade-logo"><img src="/assets/img/cozinha-solidaria.jpg" alt="Logo da Cozinha Solidária: um coração vermelho com uma panela e as palavras Cozinha solidária" loading="lazy" width="1536" height="462"></figure>
+        <figure class="novidade-foto novidade-logo"><img src="/assets/img/cozinha-solidaria.jpg" alt="Logo da Cozinha Solidária: um coração vermelho com uma panela e as palavras Cozinha solidária" loading="lazy" width="1536" height="462">
+          <figcaption class="cozinha-selos"><span>Todo mês</span><span>Arrecadação de alimentos</span><span>Para quem mais precisa</span></figcaption>
+        </figure>
         <div class="meta">
           <span class="etiqueta">Cuidado</span>
           <span class="novidade-status">Em construção</span>
