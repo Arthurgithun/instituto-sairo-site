@@ -506,23 +506,22 @@
       /* post fixo: logo inteiro, sem cortar */
     .novidades .novidade-logo img { aspect-ratio: 1536 / 462; object-fit: contain; background: #F3EEE2; padding: 12px; }
     .novidade-status { font-weight: 700; color: var(--vermelho); }
-    /* ---------- Cozinha Solidária: card com cor (vermelho do coração + verde da panela) ---------- */
-    .novidades #cozinha-solidaria { position: relative; background: #FBE3DC; border: 3px solid var(--preto);
-      border-radius: 40px 12px 40px 12px; padding: 34px 34px 30px; }
-    .novidades #cozinha-solidaria .novidade-foto { position: relative; z-index: 0; }
-    .novidades #cozinha-solidaria .novidade-foto::before { content: ""; position: absolute; z-index: -1; inset: 14px -12px -12px 14px;
-      background: var(--vermelho); border: 3px solid var(--preto); border-radius: 28px 10px 28px 10px; transform: rotate(2deg); }
-    .novidades #cozinha-solidaria .novidade-logo img { position: relative; transform: rotate(-1.5deg); background: var(--fundo); border-radius: 22px 8px 22px 8px; }
+    /* ---------- Cozinha Solidária: recorte de jornal colado com fita ---------- */
+    .novidades #cozinha-solidaria { position: relative; background: #FFFDF6; border: 2px solid var(--preto); border-radius: 2px;
+      padding: 34px 34px 30px; margin: 18px 10px 40px 0; transform: rotate(-.6deg); box-shadow: 10px 10px 0 var(--vermelho); }
+    .novidades #cozinha-solidaria::before { content: ""; position: absolute; top: -14px; left: 46%; width: 120px; height: 28px;
+      background: rgba(247, 184, 39, .82); border-left: 2px dotted rgba(0,0,0,.18); border-right: 2px dotted rgba(0,0,0,.18); transform: rotate(3deg); }
+    .novidades #cozinha-solidaria .novidade-logo img { border: 2px solid var(--preto); }
+    .novidades #cozinha-solidaria figcaption { font-size: .78rem; font-style: italic; color: #555; margin-top: 6px; }
     .novidades #cozinha-solidaria .etiqueta { background: var(--verde-profundo); color: var(--fundo); }
     .novidades #cozinha-solidaria .novidade-status { display: inline-block; padding: 2px 12px; border: 2px dashed var(--vermelho);
-      border-radius: 6px; text-transform: uppercase; letter-spacing: .06em; font-size: .78rem; color: #A8321F; transform: rotate(-3deg); background: var(--fundo); }
-    .novidades #cozinha-solidaria h3 { color: var(--verde-profundo); }
-    .novidades #cozinha-solidaria .abertura { border-left: 6px solid var(--vermelho); padding-left: 14px; }
+      border-radius: 6px; text-transform: uppercase; letter-spacing: .06em; font-size: .78rem; color: #A8321F; transform: rotate(-4deg); }
+    .novidades #cozinha-solidaria h3 { border-top: 1px solid var(--preto); padding-top: 12px; }
     .novidades #cozinha-solidaria .botao { background: var(--verde-profundo); color: var(--fundo); }
     .novidades #cozinha-solidaria .botao:hover { background: var(--laranja); color: var(--preto); }
     @media (max-width: 800px) {
-      .novidades #cozinha-solidaria { padding: 24px 20px 22px; }
-      .novidades #cozinha-solidaria .novidade-foto { margin: 0 12px 26px 0; }
+      .novidades #cozinha-solidaria { padding: 26px 18px 22px; margin: 16px 8px 32px 0; transform: rotate(-.4deg); box-shadow: 7px 7px 0 var(--vermelho); }
+      .novidades #cozinha-solidaria::before { width: 90px; left: 38%; }
     }
   </style>
 </head>
@@ -734,7 +733,7 @@
       </div>
       <div id="novidades-extra"></div>
       <article class="novidade" id="cozinha-solidaria">
-        <figure class="novidade-foto novidade-logo"><img src="/assets/img/cozinha-solidaria.jpg" alt="Logo da Cozinha Solidária: um coração vermelho com uma panela e as palavras Cozinha solidária" loading="lazy" width="1536" height="462"></figure>
+        <figure class="novidade-foto novidade-logo"><img src="/assets/img/cozinha-solidaria.jpg" alt="Logo da Cozinha Solidária: um coração vermelho com uma panela e as palavras Cozinha solidária" loading="lazy" width="1536" height="462"><figcaption>Logo da Cozinha Solidária, novo movimento da Sairó.</figcaption></figure>
         <div class="meta">
           <span class="etiqueta">Cuidado</span>
           <span class="novidade-status">Em construção</span>
