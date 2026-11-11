@@ -77,7 +77,9 @@
     fill("parceiros-lista", list("partners"), (p) => {
       const li = el("li"), box = https(p.link) ? el("a", "parceiro") : el("span", "parceiro");
       if (https(p.link)) { box.href = p.link; box.target = "_blank"; box.rel = "noopener"; }
-      if (p.url) { const img = el("img"); img.src = p.url; img.alt = p.name; img.loading = "lazy"; box.append(img); } else box.textContent = p.name;
+      // logo (se houver) com o nome embaixo; a descrição da imagem vira o texto do leitor de tela
+      if (p.url) { const img = el("img"); img.src = p.url; img.alt = p.alt || ""; img.loading = "lazy"; box.append(img); }
+      box.append(el("span", "parceiro-nome", p.name));
       li.append(box); return li;
     }, "parceiros");
     fill("docs-lista", list("documents"), (d) => {
