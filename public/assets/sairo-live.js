@@ -168,6 +168,9 @@
       if (/^https:\/\//i.test(event.link || "")) { const link = document.createElement("a"); link.className = "botao"; link.style.marginTop = "16px"; link.href = event.link; link.rel = "noopener"; link.target = "_blank"; link.textContent = "Saiba mais"; card.append(link); }
       agenda.append(card);
     });
+    // Galeria e Agenda só aparecem quando há conteúdo cadastrado no painel
+    toggle("galeria", gallery.children.length > 0);
+    toggle("agenda", events.length > 0 || https(config.agenda));
     renderExtras(content);
   } catch (error) {
     console.warn("Não foi possível atualizar o conteúdo público do Sairó.", error);
