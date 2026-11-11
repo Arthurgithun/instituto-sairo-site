@@ -416,21 +416,21 @@
     .novidades .novidade-foto img, .festa-relato .novidade-foto img { display: block; width: 100%; height: auto; max-height: 460px; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 3px solid var(--preto); border-radius: 0; }
     /* posts publicados pelo painel */
     #novidades-extra { gap: 0; margin-bottom: 0; }
-    #novidades-extra .novidade { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; align-items: start;
+    .novidades .novidade { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; align-items: start;
       padding-bottom: 32px; margin-bottom: 32px; border-bottom: 2px solid var(--preto); }
-    #novidades-extra .novidade > * { grid-column: 2; margin: 0 0 14px; }
-    #novidades-extra .novidade-foto { grid-column: 1; grid-row: 1 / span 20; }
-    #novidades-extra .novidade:not(:has(.novidade-foto)) > * { grid-column: 1 / -1; }
-    #novidades-extra .novidade p { max-width: 62ch; }
+    .novidades .novidade > * { grid-column: 2; margin: 0 0 14px; }
+    .novidades .novidade-foto { grid-column: 1; grid-row: 1 / span 20; }
+    .novidades .novidade:not(:has(.novidade-foto)) > * { grid-column: 1 / -1; }
+    .novidades .novidade p { max-width: 62ch; }
     @media (max-width: 800px) {
       .menu .miolo { justify-content: space-between; row-gap: 4px; }
       .menu ul { order: 3; flex: none; justify-content: flex-start;
         -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
       .menu ul li:last-child { padding-right: 40px; }
       .novidades .jornal-topo .intro { text-align: left; }
-      #novidades-extra .novidade { grid-template-columns: 1fr; }
-      #novidades-extra .novidade > *, #novidades-extra .novidade-foto { grid-column: 1; grid-row: auto; }
-      #novidades-extra .novidade-foto { order: -1; }
+      .novidades .novidade { grid-template-columns: 1fr; }
+      .novidades .novidade > *, .novidades .novidade-foto { grid-column: 1; grid-row: auto; }
+      .novidades .novidade-foto { order: -1; }
     }
     /* ---------- Onde a gente está ---------- */
     .onde { background: var(--amarelo); }
@@ -449,8 +449,6 @@
     .onde-mapa figcaption a { color: inherit; }
     @media (max-width: 800px) { .onde .miolo { grid-template-columns: 1fr; gap: 28px; } .onde-etiqueta { left: auto; right: calc(47.5% + 30px); } }
     /* Novidades vazia + relato da Festa dentro da janela do card (mesmo modelo do cartão) */
-    .novidades-vazio { display: none; font-weight: 700; }
-    #novidades-extra:empty + .novidades-vazio { display: block; }
     .festa-relato { margin-top: 48px; }
     .festa-relato-cartao { display: grid; gap: 14px; margin-top: 14px; }
     .festa-relato-cartao p { line-height: 1.7; }
@@ -481,6 +479,9 @@
     .foto-fechar { top: 12px; right: 12px; }
     .foto-anterior { left: 12px; top: 50%; transform: translateY(-50%); }
     .foto-proxima { right: 12px; top: 50%; transform: translateY(-50%); }
+    /* post fixo: logo inteiro, sem cortar */
+    .novidades .novidade-logo img { aspect-ratio: 1536 / 462; object-fit: contain; background: #F3EEE2; padding: 12px; }
+    .novidade-status { font-weight: 700; color: var(--vermelho); }
   </style>
 </head>
 <body>
@@ -728,7 +729,19 @@
         <p class="intro">Relatos das ações da Sairó e notícias do que acontece por aqui.</p>
       </div>
       <div id="novidades-extra"></div>
-      <p class="novidades-vazio">Em breve, novidades por aqui.</p>
+      <article class="novidade" id="cozinha-solidaria">
+        <figure class="novidade-foto novidade-logo"><img src="/assets/img/cozinha-solidaria.jpg" alt="Logo da Cozinha Solidária: um coração vermelho com uma panela e as palavras Cozinha solidária" loading="lazy" width="1536" height="462"></figure>
+        <div class="meta">
+          <span class="etiqueta">Cuidado</span>
+          <span class="novidade-status">Em construção</span>
+        </div>
+        <h3>Cozinha Solidária: um movimento que está nascendo</h3>
+        <p class="abertura">A Sairó está dando os primeiros passos de um novo movimento: a Cozinha Solidária. A ideia é organizar, todo mês, uma arrecadação de alimentos e levar comida a pessoas em situação de vulnerabilidade no nosso território.</p>
+        <p>Ela nasce do que aprendemos no Natal que Acolhe: quando muita gente se junta, a comida chega a mais mesas. Agora, o desafio é fazer esse gesto virar rotina, e não só uma ação de fim de ano.</p>
+        <p>Para a Sairó, cuidado começa por garantir o básico com dignidade. E mobilização é isso: vizinhos, voluntários e parceiros dividindo o que têm para que ninguém fique de fora.</p>
+        <p>Ainda estamos definindo como tudo vai funcionar: os pontos de arrecadação, os alimentos que vamos receber e a melhor forma de chegar a quem mais precisa. Quer construir esse movimento com a gente desde o começo?</p>
+        <a class="botao" href="#contato">Fale com a gente</a>
+      </article>
     </div>
   </section>
 
