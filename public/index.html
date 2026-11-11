@@ -506,12 +506,12 @@
     /* atividades da Festa com fotos */
     .natal-lista li.atividade { padding: 0; }
     .natal-lista li.atividade:hover { transform: none; }
-    .atividade summary { list-style: none; cursor: pointer; display: flex; align-items: center; padding: 12px 20px; min-height: 44px; }
-    .atividade summary::-webkit-details-marker { display: none; }
+    .atividade-botao { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: flex; align-items: center; padding: 12px 20px; min-height: 44px; font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    .atividade-botao:focus-visible { outline: 3px solid var(--amarelo); outline-offset: -3px; border-radius: inherit; }
     .atividade-ver { margin-left: auto; padding-left: 12px; font: 700 .8rem var(--corpo); color: var(--amarelo); white-space: nowrap; }
     .atividade-ver::after { content: " ▾"; display: inline-block; transition: transform .2s ease; }
-    .atividade details[open] .atividade-ver::after { transform: rotate(180deg); }
-    .atividade summary:hover .atividade-ver { text-decoration: underline; }
+    .atividade-botao[aria-expanded="true"] .atividade-ver::after { transform: rotate(180deg); }
+    .atividade-botao:hover .atividade-ver { text-decoration: underline; }
     .atividade-fotos { padding: 0 12px 12px; }
     .faixa { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; padding-bottom: 6px; overscroll-behavior-x: contain; }
     .miniatura { flex: 0 0 auto; width: clamp(130px, 38%, 200px); padding: 0; border: 2px solid var(--amarelo); border-radius: 8px; overflow: hidden; background: #000; cursor: zoom-in; scroll-snap-align: start; }
@@ -698,9 +698,8 @@
           <ul class="natal-lista">
             <li class="atividade">
               <!-- fotos da atividade: acrescente mais <img> dentro de .atividade-fotos -->
-              <details>
-                <summary><span class="festa-ponto" aria-hidden="true"></span>Pintura facial<span class="atividade-ver">Ver fotos</span></summary>
-                <div class="atividade-fotos">
+              <button type="button" class="atividade-botao" aria-expanded="false" aria-controls="fotos-pintura"><span class="festa-ponto" aria-hidden="true"></span>Pintura facial<span class="atividade-ver">Ver fotos</span></button>
+                <div class="atividade-fotos" id="fotos-pintura" hidden>
                   <!-- TESTE: a mesma imagem repetida 24 vezes -->
                   <div class="faixa" tabindex="0" aria-label="Fotos de pintura facial, deslize para o lado">
                     <button type="button" class="miniatura" aria-label="Ampliar foto 1 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
@@ -730,7 +729,6 @@
                   </div>
                   <p class="contador" aria-live="polite"></p>
                 </div>
-              </details>
             </li>
             <li><span class="festa-ponto" aria-hidden="true"></span>Aula de luta livre e de swordplay</li>
             <li><span class="festa-ponto" aria-hidden="true"></span>Pula-pula e brinquedos infláveis</li>
@@ -1019,7 +1017,14 @@
           contador.textContent = total <= cabem ? `${total} fotos` : `${primeira}–${ultima} de ${total} · deslize para ver mais`;
         };
         faixa.addEventListener("scroll", atualizar, { passive: true });
-        galeria.closest("details").addEventListener("toggle", atualizar);
+        const abrir = galeria.closest(".atividade").querySelector(".atividade-botao");
+        abrir.addEventListener("click", () => {
+          const aberto = abrir.getAttribute("aria-expanded") === "true";
+          abrir.setAttribute("aria-expanded", String(!aberto));
+          abrir.querySelector(".atividade-ver").textContent = aberto ? "Ver fotos" : "Fechar fotos";
+          galeria.hidden = aberto;
+          if (!aberto) atualizar();
+        });
         botoes.forEach((botao, i) => botao.addEventListener("click", () => {
           fotos = botoes.map((b) => b.querySelector("img"));
           mostrar(i); caixa.showModal();
