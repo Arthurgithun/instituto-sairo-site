@@ -108,6 +108,42 @@
     }
     @keyframes voo { to { transform: translateY(-12px) rotate(1.5deg); } }
 
+    /* ---------- Voluntariado ---------- */
+    .voluntariado { background: var(--azul-profundo); color: var(--fundo); position: relative; overflow: hidden; }
+    .voluntariado .miolo { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; position: relative; z-index: 1; }
+    .voluntariado h2 { color: var(--fundo); }
+    .voluntariado h2::after { background: var(--amarelo); }
+    .voluntariado p { max-width: 46ch; }
+    .voluntariado p + p { margin-top: 14px; }
+    .voluntariado .botao { margin-top: 28px; }
+    .vol-frentes { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .vol-frentes li { font-weight: 700; font-size: .95rem; padding: 6px 14px; border: 3px solid var(--preto); border-radius: 18px 8px 18px 8px; color: var(--preto); }
+    .vol-frentes li:nth-child(6n+1) { background: var(--amarelo); transform: rotate(-1.5deg); }
+    .vol-frentes li:nth-child(6n+2) { background: var(--fundo); transform: rotate(1deg); }
+    .vol-frentes li:nth-child(6n+3) { background: var(--verde-vivo); transform: rotate(-.8deg); }
+    .vol-frentes li:nth-child(6n+4) { background: var(--laranja); transform: rotate(1.4deg); }
+    .vol-frentes li:nth-child(6n+5) { background: var(--azul); transform: rotate(-1deg); }
+    .vol-passos { list-style: none; counter-reset: passo; display: grid; gap: 18px; }
+    .vol-passos li { counter-increment: passo; position: relative; background: var(--fundo); color: var(--preto); padding: 20px 22px 20px 84px; border: 3px solid var(--preto); border-radius: 28px 10px 28px 10px; }
+    .vol-passos li:nth-child(2) { transform: translateX(18px); }
+    .vol-passos li::before {
+      content: counter(passo); position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+      width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%;
+      font-family: var(--pincel); font-size: 1.7rem; background: var(--vermelho); color: var(--fundo); border: 3px solid var(--preto);
+    }
+    .vol-passos li:nth-child(2)::before { background: var(--verde-profundo); }
+    .vol-passos li:nth-child(3)::before { background: var(--laranja); color: var(--preto); }
+    .vol-passos strong { display: block; font-size: 1.08rem; margin-bottom: 2px; }
+    .vol-passos span { font-size: .95rem; }
+    .voluntariado .mural-folha.f1 { left: auto; right: -90px; top: -90px; width: 220px; height: 220px; z-index: 0; }
+    .voluntariado .mural-folha.f2 { right: auto; left: -80px; bottom: -110px; width: 240px; height: 240px; z-index: 0; opacity: .9; }
+    @media (max-width: 800px) {
+      .voluntariado .miolo { grid-template-columns: 1fr; gap: 36px; }
+      .vol-passos li:nth-child(2) { transform: none; }
+      .vol-passos li { padding: 16px 16px 16px 68px; }
+      .vol-passos li::before { left: 14px; width: 40px; height: 40px; font-size: 1.45rem; }
+    }
+
     /* ---------- Quem somos ---------- */
     .quem { background: var(--noite); color: var(--fundo); position: relative; overflow: hidden; }
     .quem .miolo { position: relative; z-index: 1; }
@@ -485,7 +521,6 @@
         <li data-secao="agenda" hidden><a href="#agenda">Agenda</a></li>
         <li data-secao="equipe" hidden><a href="#equipe">Equipe</a></li>
         <li data-secao="transparencia" hidden><a href="#transparencia">Transparência</a></li>
-        <li><a href="/voluntarios.html">Voluntários</a></li>
         <li><a href="#contato">Contato</a></li>
       </ul>
       <a class="botao menu-apoie" href="#apoie">Apoie a Sairó</a>
@@ -751,6 +786,27 @@
     <div class="miolo">
       <h2 id="perguntas-titulo">Perguntas frequentes</h2>
       <div class="faq-lista" id="faq-lista"></div>
+    </div>
+  </section>
+
+  <section class="voluntariado" id="voluntariado" aria-labelledby="voluntariado-titulo">
+    <span class="mural-folha f1" aria-hidden="true"></span><span class="mural-folha f2" aria-hidden="true"></span>
+    <div class="miolo">
+      <div>
+        <h2 id="voluntariado-titulo">Seja voluntário(a)</h2>
+        <p>A Sairó acontece no encontro, e cada mão faz diferença: na festa, na arrecadação, na oficina, na divulgação.</p>
+        <p>Não precisa ter experiência. Basta vontade de estar junto e um pouco do seu tempo.</p>
+        <ul class="vol-frentes" aria-label="Formas de ajudar">
+          <li>Eventos e ações de rua</li><li>Oficinas e cultura</li><li>Arrecadação e doações</li>
+          <li>Divulgação e redes sociais</li><li>Fotos e vídeos</li>
+        </ul>
+        <a class="botao" href="/voluntarios.html">Quero ser voluntário(a)</a>
+      </div>
+      <ol class="vol-passos" aria-label="Como funciona">
+        <li><strong>Preencha o cadastro</strong><span>Nome, contato, bairro e como você gosta de ajudar.</span></li>
+        <li><strong>A gente chama você</strong><span>Quando surgir uma ação que combine com o seu jeito de ajudar.</span></li>
+        <li><strong>Bora junto</strong><span>Você participa no seu tempo, ao lado de quem faz a Sairó acontecer.</span></li>
+      </ol>
     </div>
   </section>
 
