@@ -99,7 +99,7 @@
   // Abas do painel, em grupos. As "i-..." editam as seções do site (ver itemViews).
   const groups = () => [
     ["Gerenciar", [["overview", "Visão geral"], ["projects", "Projetos"], ["events", "Agenda"], ["photos", "Galeria"], ["i-news", "Novidades"], ["volunteers", "Voluntários"], ["settings", "Informações"]]],
-    ["Seções do site", [["i-impact", "Números de impacto"], ["i-partners", "Parceiros"], ["i-documents", "Transparência"], ["i-team", "Quem faz a Sairó"], ["i-faqs", "Perguntas frequentes"], ["i-testimonials", "Depoimentos"]]],
+    ["Seções do site", [["i-impact", "Números de impacto"], ["i-partners", "Parceiros"], ["i-team", "Quem faz a Sairó"]]],
     ["Acesso", [state.me.owner ? ["team", "Acessos ao painel"] : ["account", "Minha senha"]]],
   ];
   const tabs = () => groups().flatMap(([, list]) => list);
