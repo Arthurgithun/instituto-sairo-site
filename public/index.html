@@ -503,7 +503,32 @@
     .festa-relato-cartao p { line-height: 1.7; }
     .festa-relato .novidade-foto { margin: 0 0 4px; }
     .festa-relato-num { margin-top: 18px; }
-      /* post fixo: logo inteiro, sem cortar */
+    /* atividades da Festa com fotos */
+    .natal-lista li.atividade { padding: 0; }
+    .natal-lista li.atividade:hover { transform: none; }
+    .atividade-botao { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: flex; align-items: center; padding: 12px 20px; min-height: 44px; font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    .atividade-botao:focus-visible { outline: 3px solid var(--amarelo); outline-offset: -3px; border-radius: inherit; }
+    .atividade-ver { margin-left: auto; padding-left: 12px; font: 700 .8rem var(--corpo); color: var(--amarelo); white-space: nowrap; }
+    .atividade-ver::after { content: " ▾"; display: inline-block; transition: transform .2s ease; }
+    .atividade-botao[aria-expanded="true"] .atividade-ver::after { transform: rotate(180deg); }
+    .atividade-botao:hover .atividade-ver { text-decoration: underline; }
+    .atividade-fotos { padding: 0 12px 12px; }
+    .faixa { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; padding-bottom: 6px; overscroll-behavior-x: contain; }
+    .miniatura { flex: 0 0 auto; width: clamp(130px, 38%, 200px); padding: 0; border: 2px solid var(--amarelo); border-radius: 8px; overflow: hidden; background: #000; cursor: zoom-in; scroll-snap-align: start; }
+    .miniatura img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .2s ease; }
+    .miniatura:hover img { transform: scale(1.04); }
+    .contador { font: 700 .8rem var(--corpo); color: var(--amarelo); margin-top: 6px; }
+    /* foto em tela cheia */
+    .foto-ampliada { border: 0; padding: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; }
+    .foto-ampliada::backdrop { background: rgba(10, 10, 10, .92); }
+    .foto-ampliada figure { margin: 0; height: 100%; display: grid; place-items: center; padding: 56px 12px 48px; }
+    .foto-ampliada img { max-width: 100%; max-height: calc(100vh - 110px); object-fit: contain; border-radius: 8px; }
+    .foto-ampliada figcaption { position: fixed; bottom: 14px; left: 0; right: 0; text-align: center; color: #fff; font: 700 .9rem var(--corpo); }
+    .foto-ampliada button { position: fixed; width: 48px; height: 48px; border-radius: 50%; border: 3px solid var(--preto); background: var(--amarelo); color: var(--preto); font: 700 1.4rem/1 var(--corpo); cursor: pointer; }
+    .foto-fechar { top: 12px; right: 12px; }
+    .foto-anterior { left: 12px; top: 50%; transform: translateY(-50%); }
+    .foto-proxima { right: 12px; top: 50%; transform: translateY(-50%); }
+    /* post fixo: logo inteiro, sem cortar */
     .novidades .novidade-logo img { aspect-ratio: 1536 / 462; object-fit: contain; background: #F3EEE2; padding: 12px; }
     .novidade-status { font-weight: 700; color: var(--vermelho); }
   </style>
@@ -671,7 +696,40 @@
           </div>
           <p style="margin-top:28px"><span class="tarja a">O que teve na festa:</span></p>
           <ul class="natal-lista">
-            <li><span class="festa-ponto" aria-hidden="true"></span>Pintura facial</li>
+            <li class="atividade">
+              <!-- fotos da atividade: acrescente mais <img> dentro de .atividade-fotos -->
+              <button type="button" class="atividade-botao" aria-expanded="false" aria-controls="fotos-pintura"><span class="festa-ponto" aria-hidden="true"></span>Pintura facial<span class="atividade-ver">Ver fotos</span></button>
+                <div class="atividade-fotos" id="fotos-pintura" hidden>
+                  <!-- TESTE: a mesma imagem repetida 24 vezes -->
+                  <div class="faixa" tabindex="0" aria-label="Fotos de pintura facial, deslize para o lado">
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 1 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 2 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 3 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 4 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 5 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 6 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 7 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 8 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 9 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 10 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 11 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 12 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 13 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 14 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 15 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 16 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 17 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 18 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 19 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 20 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 21 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 22 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 23 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                    <button type="button" class="miniatura" aria-label="Ampliar foto 24 de 24"><img src="/assets/img/atividades/pintura-facial-1.jpg" alt="Pintura facial na Festa na Rua das Crianças" loading="lazy" width="735" height="478"></button>
+                  </div>
+                  <p class="contador" aria-live="polite"></p>
+                </div>
+            </li>
             <li><span class="festa-ponto" aria-hidden="true"></span>Aula de luta livre e de swordplay</li>
             <li><span class="festa-ponto" aria-hidden="true"></span>Pula-pula e brinquedos infláveis</li>
             <li><span class="festa-ponto" aria-hidden="true"></span>Danças</li>
@@ -928,6 +986,65 @@
       modal.querySelectorAll('[data-fechar]').forEach(x => x.addEventListener('click', () => modal.close()));
       modal.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', () => modal.close()));
     });
+  </script>
+  <dialog class="foto-ampliada" id="foto-ampliada" aria-label="Foto ampliada">
+    <figure><img src="" alt=""><figcaption></figcaption></figure>
+    <button type="button" class="foto-fechar" aria-label="Fechar">×</button>
+    <button type="button" class="foto-anterior" aria-label="Foto anterior">‹</button>
+    <button type="button" class="foto-proxima" aria-label="Próxima foto">›</button>
+  </dialog>
+  <script>
+    // Galerias das atividades da Festa: faixa que desliza + foto em tela cheia
+    (function () {
+      const caixa = document.getElementById("foto-ampliada");
+      if (!caixa) return;
+      const img = caixa.querySelector("img"), legenda = caixa.querySelector("figcaption");
+      let fotos = [], atual = 0;
+      const mostrar = (i) => {
+        atual = (i + fotos.length) % fotos.length;
+        img.src = fotos[atual].src; img.alt = fotos[atual].alt;
+        legenda.textContent = `${atual + 1} de ${fotos.length}`;
+      };
+      document.querySelectorAll(".atividade-fotos").forEach((galeria) => {
+        const faixa = galeria.querySelector(".faixa"), contador = galeria.querySelector(".contador");
+        const botoes = [...faixa.querySelectorAll(".miniatura")];
+        const atualizar = () => {
+          const passo = botoes[0].offsetWidth + 10, total = botoes.length;
+          const cabem = Math.max(1, Math.floor((faixa.clientWidth + 10) / passo));
+          const fim = faixa.scrollLeft + faixa.clientWidth >= faixa.scrollWidth - 4;
+          const ultima = fim ? total : Math.min(total, Math.round(faixa.scrollLeft / passo) + cabem);
+          const primeira = Math.max(1, ultima - cabem + 1);
+          contador.textContent = total <= cabem ? `${total} fotos` : `${primeira}–${ultima} de ${total} · deslize para ver mais`;
+        };
+        faixa.addEventListener("scroll", atualizar, { passive: true });
+        const abrir = galeria.closest(".atividade").querySelector(".atividade-botao");
+        abrir.addEventListener("click", () => {
+          const aberto = abrir.getAttribute("aria-expanded") === "true";
+          abrir.setAttribute("aria-expanded", String(!aberto));
+          abrir.querySelector(".atividade-ver").textContent = aberto ? "Ver fotos" : "Fechar fotos";
+          galeria.hidden = aberto;
+          if (!aberto) atualizar();
+        });
+        botoes.forEach((botao, i) => botao.addEventListener("click", () => {
+          fotos = botoes.map((b) => b.querySelector("img"));
+          mostrar(i); caixa.showModal();
+        }));
+      });
+      caixa.querySelector(".foto-fechar").addEventListener("click", () => caixa.close());
+      caixa.querySelector(".foto-anterior").addEventListener("click", () => mostrar(atual - 1));
+      caixa.querySelector(".foto-proxima").addEventListener("click", () => mostrar(atual + 1));
+      caixa.addEventListener("click", (e) => { if (e.target === caixa || e.target.tagName === "FIGURE") caixa.close(); });
+      caixa.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") mostrar(atual - 1);
+        if (e.key === "ArrowRight") mostrar(atual + 1);
+      });
+      let x0 = null;
+      caixa.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+      caixa.addEventListener("touchend", (e) => {
+        if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+        if (Math.abs(dx) > 40) mostrar(atual + (dx < 0 ? 1 : -1));
+      });
+    })();
   </script>
   <script src="/assets/sairo-live.js" defer></script>
 </body>
