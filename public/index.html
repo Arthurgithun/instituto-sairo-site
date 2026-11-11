@@ -115,7 +115,8 @@
     .voluntariado h2::after { background: var(--amarelo); }
     .voluntariado p { max-width: 46ch; }
     .voluntariado p + p { margin-top: 14px; }
-    .voluntariado .botao { margin-top: 28px; }
+    .vol-acao { grid-column: 1 / -1; text-align: center; }
+    .voluntariado .botao { font-size: 1.1rem; padding: 16px 36px; }
     .vol-frentes { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
     .vol-frentes li { font-weight: 700; font-size: .95rem; padding: 6px 14px; border: 3px solid var(--preto); border-radius: 18px 8px 18px 8px; color: var(--preto); }
     .vol-frentes li:nth-child(6n+1) { background: var(--amarelo); transform: rotate(-1.5deg); }
@@ -860,13 +861,13 @@
           <li>Eventos e ações de rua</li><li>Oficinas e cultura</li><li>Arrecadação e doações</li>
           <li>Divulgação e redes sociais</li><li>Fotos e vídeos</li>
         </ul>
-        <a class="botao" href="/voluntarios.html">Quero ser voluntário(a)</a>
       </div>
       <ol class="vol-passos" aria-label="Como funciona">
         <li><strong>Preencha o cadastro</strong><span>Nome, contato, bairro e como você gosta de ajudar.</span></li>
         <li><strong>A gente chama você</strong><span>Quando surgir uma ação que combine com o seu jeito de ajudar.</span></li>
         <li><strong>Bora junto</strong><span>Você participa no seu tempo, ao lado de quem faz a Sairó acontecer.</span></li>
       </ol>
+      <div class="vol-acao"><a class="botao" href="/voluntarios.html">Quero ser voluntário(a)</a></div>
     </div>
   </section>
 
