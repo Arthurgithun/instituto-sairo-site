@@ -146,13 +146,23 @@
     byId("mensagem-vazia").hidden = gallery.children.length > 0;
 
     const actions = document.querySelector(".acoes-par");
-    projects.forEach((project) => {
-      const card = document.createElement("article"); card.className = "acao-card claro";
+    // projetos do painel: cor chapada da paleta (escolhida ou automática), imagem, ano em tarja e etiquetas
+    const autoCores = ["verde", "azul", "vermelho", "laranja"];
+    projects.forEach((project, i) => {
+      const cor = ["verde", "azul", "vermelho", "laranja", "amarelo"].includes(project.color) ? project.color : autoCores[i % autoCores.length];
+      const card = document.createElement("article"); card.className = `acao-card projeto-card cor-${cor}`;
       const header = document.createElement("div"); header.className = "natal-topo";
+      if (project.url) {
+        const fig = document.createElement("figure"); fig.className = "projeto-imagem";
+        const img = document.createElement("img"); img.src = project.url; img.alt = project.alt || ""; img.loading = "lazy";
+        fig.append(img); header.append(fig);
+      }
       const title = document.createElement("h3"); title.className = "acao-placa"; title.textContent = project.title;
       header.append(title);
-      if (project.year) { const year = document.createElement("p"); year.textContent = project.year; header.append(year); }
-      const description = document.createElement("p"); description.textContent = project.description;
+      if (project.year) { const year = document.createElement("p"); const tarja = document.createElement("span"); tarja.className = "projeto-ano"; tarja.textContent = project.year; year.append(tarja); header.append(year); }
+      const tags = String(project.tags || "").split(",").map((t) => t.trim()).filter(Boolean).slice(0, 4);
+      if (tags.length) { const eixos = document.createElement("p"); eixos.className = "eixos"; tags.forEach((t) => { const tag = document.createElement("span"); tag.className = "etiqueta"; tag.textContent = t; eixos.append(tag); }); header.append(eixos); }
+      const description = document.createElement("p"); description.className = "projeto-texto"; description.textContent = project.description;
       const call = document.createElement("a"); call.className = "natal-botao"; call.href = "#contato"; call.textContent = "Fale com a gente";
       card.append(header, description, call); actions?.append(card);
     });

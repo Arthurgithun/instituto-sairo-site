@@ -22,7 +22,10 @@ export default async (req) => {
     return json({
       ...extra,
       festaFoto: festa?.objectKey ? { url: `/api/media/${festa.objectKey}`, alt: festa.alt || "" } : null,
-      projects: projects.filter((p) => p.published !== 0).slice(0, 30).map(({ id, title, year, description }) => ({ id, title, year, description })),
+      projects: projects.filter((p) => p.published !== 0).slice(0, 30).map(({ id, title, year, description, tags, color, objectKey, alt }) => ({
+        id, title, year, description, tags: tags || "", color: color || "",
+        ...(objectKey ? { url: `/api/media/${objectKey}`, alt: alt || "" } : {}),
+      })),
       events: events.filter((e) => e.published !== 0).slice(0, 40)
         .map(({ id, title, date, location, description, link }) => ({ id, title, date, location, description, link }))
         .sort((a, b) => (a.date || "\uffff").localeCompare(b.date || "\uffff")),

@@ -158,15 +158,40 @@
       published: h("input", { type: "checkbox", checked: ed ? ed.published !== 0 : true }),
     };
     f.description.value = ed?.description || "";
+    // projetos: imagem, etiquetas e cor do card (todos opcionais)
+    let chosen = null;
+    const nomeArq = h("span", {}, "Clique para escolher uma imagem (logo ou foto)");
+    const arquivo = h("input", { type: "file", id: "projeto-arquivo", class: "sr", accept: "image/png,image/jpeg,image/webp,image/gif", onchange: () => { chosen = arquivo.files[0] || null; nomeArq.textContent = chosen ? chosen.name : "Clique para escolher uma imagem (logo ou foto)"; } });
+    const alt = h("input", { value: ed?.alt || "", maxlength: 280, placeholder: "Ex.: Logo do projeto com um coração vermelho" });
+    const remover = h("input", { type: "checkbox" });
+    const tags = h("input", { value: ed?.tags || "", maxlength: 120, placeholder: "Ex.: Cuidado, Cultura" });
+    const cor = h("select", {}, [["", "Automática"], ["verde", "Verde"], ["azul", "Azul"], ["vermelho", "Vermelho"], ["laranja", "Laranja"], ["amarelo", "Amarelo"]]
+      .map(([value, label]) => h("option", { value }, label)));
+    cor.value = ed?.color || "";
     const form = h("form", { class: "cartao form", onsubmit: (e) => {
       e.preventDefault();
       const body = { table: kind, id: ed?.id, title: f.title.value, description: f.description.value, published: f.published.checked ? 1 : 0 };
-      if (isProject) body.year = f.year.value; else Object.assign(body, { date: f.date.value, location: f.location.value, link: f.link.value });
-      run(async () => { await api("/api/admin/records", { method: "POST", body }); state.editing = null; await loadData(); }, "Registro salvo com sucesso.");
+      if (isProject) Object.assign(body, { year: f.year.value, tags: tags.value, color: cor.value, alt: alt.value, removeImage: remover.checked ? "1" : "" });
+      else Object.assign(body, { date: f.date.value, location: f.location.value, link: f.link.value });
+      run(async () => {
+        if (isProject) {
+          const form = new FormData();
+          for (const [key, value] of Object.entries(body)) if (value !== undefined && value !== null) form.append(key, String(value));
+          if (chosen) form.append("image", await shrink(chosen));
+          await api("/api/admin/records", { method: "POST", form });
+        } else await api("/api/admin/records", { method: "POST", body });
+        state.editing = null; await loadData();
+      }, "Registro salvo com sucesso.");
     } },
       h("h2", {}, ed ? "Editar registro" : isProject ? "Novo projeto" : "Novo evento"),
       h("label", { class: "campo" }, "Título", f.title),
-      isProject ? h("label", { class: "campo" }, "Ano", f.year) : [h("label", { class: "campo" }, "Data e horário", f.date), h("label", { class: "campo" }, "Local", f.location), h("label", { class: "campo" }, "Link para inscrições (opcional)", f.link)],
+      isProject ? [h("label", { class: "campo" }, "Ano ou situação (ex.: 2026, Em construção)", f.year),
+        h("label", { class: "campo" }, "Etiquetas (opcional, separe por vírgula)", tags),
+        h("label", { class: "campo" }, "Cor do card", cor),
+        ed?.url && h("img", { class: "previa", src: ed.url, alt: ed.alt || "Imagem atual" }),
+        h("label", { class: "area", for: "projeto-arquivo" }, "🖼", nomeArq, arquivo),
+        h("label", { class: "campo" }, "Descrição da imagem (para leitores de tela)", alt),
+        ed?.url && h("label", { class: "linha-marca" }, remover, "Remover a imagem atual")] : [h("label", { class: "campo" }, "Data e horário", f.date), h("label", { class: "campo" }, "Local", f.location), h("label", { class: "campo" }, "Link para inscrições (opcional)", f.link)],
       h("label", { class: "campo" }, "Descrição", f.description),
       h("label", { class: "linha-marca" }, f.published, "Publicar no site"),
       h("div", { class: "botoes" }, h("button", { class: "btn", type: "submit", disabled: state.busy }, state.busy ? "Salvando..." : "Salvar"),
