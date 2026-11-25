@@ -59,6 +59,37 @@
     const section = byId(name); if (section) section.hidden = !on;
     document.querySelectorAll(`[data-secao="${name}"]`).forEach((node) => { node.hidden = !on; });
   }
+  // Novidades: uma notícia por vez, com as manchetes em botões (a mais nova aparece primeiro)
+  function montarManchetes() {
+    const secao = document.querySelector(".novidades .miolo"); if (!secao) return;
+    secao.querySelector(".manchetes")?.remove();
+    const artigos = [...secao.querySelectorAll("article.novidade")];
+    artigos.forEach((a) => { a.hidden = false; a.removeAttribute("role"); });
+    if (artigos.length < 2) return;
+    const barra = el("div", "manchetes"); barra.setAttribute("role", "tablist"); barra.setAttribute("aria-label", "Escolha a notícia");
+    let botoes = [];
+    const mostrar = (k) => artigos.forEach((a, i) => { a.hidden = i !== k; botoes[i].setAttribute("aria-selected", String(i === k)); botoes[i].tabIndex = i === k ? 0 : -1; });
+    botoes = artigos.map((art, i) => {
+      if (!art.id) art.id = `novidade-${i + 1}`;
+      const titulo = art.querySelector("h3")?.textContent.trim() || `Notícia ${i + 1}`;
+      const b = el("button", "manchete", titulo);
+      b.type = "button"; b.id = `${art.id}-aba`; b.title = titulo;
+      b.setAttribute("role", "tab"); b.setAttribute("aria-controls", art.id);
+      art.setAttribute("role", "tabpanel"); art.setAttribute("aria-labelledby", b.id);
+      b.addEventListener("click", () => mostrar(i));
+      b.addEventListener("keydown", (e) => {
+        const passo = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0; if (!passo) return;
+        e.preventDefault(); const j = (i + passo + artigos.length) % artigos.length; mostrar(j); botoes[j].focus();
+      });
+      return b;
+    });
+    barra.append(...botoes);
+    const topo = secao.querySelector(".jornal-topo"); if (topo) topo.after(barra); else secao.prepend(barra);
+    const alvo = artigos.findIndex((a) => location.hash === `#${a.id}`);
+    mostrar(alvo >= 0 ? alvo : 0);
+  }
+  window.addEventListener("hashchange", () => { const alvo = byId(decodeURIComponent(location.hash.slice(1))); if (alvo?.closest(".novidades")) montarManchetes(); });
+
   function renderExtras(data) {
     const list = (key) => (data[key] && data[key].length ? data[key] : exemplo ? EXEMPLOS[key] || [] : []);
     const fill = (id, items, build, section) => { const box = byId(id); if (!box) return; box.replaceChildren(); items.forEach((item) => box.append(build(item))); toggle(section, items.length > 0); };
@@ -103,6 +134,7 @@
         news.append(art);
       });
     }
+    montarManchetes();
     // foto do relato da Festa
     const festa = byId("festa-foto");
     if (festa) {
